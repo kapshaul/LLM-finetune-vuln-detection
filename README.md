@@ -1,5 +1,19 @@
-# Instructions
+# Preparation
+## **1. Packages Installation (Python 3.10 used)**
+ - pip install --upgrade pip
+ - pip3 install numpy
+ - pip3 install torch torchvision torchaudio
+ - pip3 install accelerate
+ - pip3 install transformers==4.34.1
+ - pip3 install peft
+ - pip3 install scipy
 
+## **2. Code Changes**
+ - Change: LLM/starcoder/finetune/run.py | (All) prepare_model_for_int8_training -> prepare_model_for_kbit_training
+ - Change: LLM/starcoder/finetune/run.py | "/home/ma-user/modelarts/inputs/model_2/" -> "TheBloke/Wizard-Vicuna-13B-Uncensored-HF"
+ - Add: vd_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
+
+# Instructions
 ## **1. Request GPU (Change based on your demand)**
 srun -p dgxh --time=1-00:00:00 -c 2 --gres=gpu:4 --mem=40g --pty bash
  - Cluster: dgxh
