@@ -17,12 +17,12 @@
 
 # Instructions
 ## **1. Request GPU (Change based on your demand)**
-srun -p dgxh --time=1-00:00:00 -c 2 --gres=gpu:4 --mem=40g --pty bash
+srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - Cluster: dgxh
- - Time: 1-00:00:00
+ - Time: 2-00:00:00
  - #CPUs: 2
- - #GPUs: 4
- - Memory: 40g
+ - #GPUs: 2
+ - Memory: 20g
 
 ## **2. Load openssl module**
 module load openssl
