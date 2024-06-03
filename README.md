@@ -8,7 +8,7 @@
  - pip3 install peft
  - pip3 install scipy
  - pip3 install -U scikit-learn
-
+ - pip3 install bitsandbytes
 
 ## **2. Code Changes**
  - Change: LLM/starcoder/finetune/run.py | (All) prepare_model_for_int8_training -> prepare_model_for_kbit_training
