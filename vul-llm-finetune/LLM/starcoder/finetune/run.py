@@ -52,7 +52,7 @@ class SaveBestModelCallback(TrainerCallback):
 
             kwargs["model"].save_pretrained(checkpoint_folder)
 
-            pytorch_model_path = os.path.join(checkpoint_folder, "pytorch_model.bin")
+            pytorch_model_path = os.path.join(checkpoint_folder, "adapter_model.bin")
             torch.save({}, pytorch_model_path)
 
             print(f"New best model found! Saving model with AUC {state.best_metric} to {checkpoint_folder}")
