@@ -1,6 +1,6 @@
 # Preparation
 ## **1. Packages Installation (Python 3.10 used)**
- - pip install --upgrade pip
+ - python.exe -m pip install --upgrade pip
  - pip3 install numpy
  - pip3 install torch torchvision torchaudio
  - pip3 install accelerate
