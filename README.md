@@ -7,6 +7,8 @@
  - pip3 install transformers==4.34.1
  - pip3 install peft
  - pip3 install scipy
+ - pip3 install -U scikit-learn
+
 
 ## **2. Code Changes**
  - Change: LLM/starcoder/finetune/run.py | (All) prepare_model_for_int8_training -> prepare_model_for_kbit_training
