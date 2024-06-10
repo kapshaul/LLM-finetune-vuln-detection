@@ -30,6 +30,7 @@ source vd_venv/bin/activate
 
 ## **3. Use the below command to run (Specify the correct path for the file)**
  - Debug using a small model
+'''
 python vul-llm-finetune/LLM/starcoder/finetune/run.py `
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' `
 --split="train" `
@@ -44,6 +45,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py `
 --log_freq=10 `
 --several_funcs_in_batch `
 --debug_on_small_model
+'''
 
  - Train using LLM
 python vul-llm-finetune/LLM/starcoder/finetune/run.py `
