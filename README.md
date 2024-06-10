@@ -41,7 +41,7 @@ source vd_venv/bin/activate
 --weight_decay 0.05 `
 --gradient_accumulation_steps 16 `
 --num_warmup_steps 1 `
---output_dir='vul-llm-finetune/outputs/results_0/' `
+--output_dir='vul-llm-finetune/outputs/results_test/' `
 --log_freq=10 `
 --several_funcs_in_batch `
 --debug_on_small_model```
