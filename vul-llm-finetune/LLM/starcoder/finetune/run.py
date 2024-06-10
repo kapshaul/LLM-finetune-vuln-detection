@@ -6,6 +6,7 @@ import tarfile
 import tempfile
 import shutil
 import math
+import gc
 
 import numpy as np
 import scipy.special
@@ -23,13 +24,17 @@ from transformers import (AutoConfig, AutoModelForCausalLM, AutoTokenizer,
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, set_peft_model_state_dict, AdaLoraConfig
+from safetensors import safe_open
 
-sys.path.append("/home/ma-user/modelarts/inputs/code_1")
+sys.path.append("/Users/용환/Desktop/Study/School/AI 539 - NLP/Project/vul-llm-finetune/LLM/starcoder")
 from finetune.dataset import create_datasets_for_classification
 from finetune.gpt_big_code_classification_several_funcs import GPTBigCodeClassificationSeveralFunc, GPTBigCodeConfigClassificationSeveralFunc
 from utils.calc_quality import quality_short_report_val, quality_full_report_val
 from debug_funcs import _build_debug_param_to_name_mapping_our_debug, debug_params
 
+# Empty VRAM cache
+gc.collect()
+torch.cuda.empty_cache()
 
 transformers.logging.set_verbosity_info()
 logger = logging.getLogger(__name__)
@@ -103,7 +108,7 @@ def get_args():
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--gradient_accumulation_steps", type=int, default=16)
     parser.add_argument("--eos_token_id", type=int, default=49152)
-    parser.add_argument("--lora_r", type=int, default=16)
+    parser.add_argument("--lora_r", type=int, default=8)
     parser.add_argument("--lora_alpha", type=int, default=32)
     parser.add_argument("--lora_dropout", type=float, default=0.05)
 
@@ -181,7 +186,7 @@ class EvalQuality():
                         labels_vect.append(labels[i, j])
                         logits_vect.append(logits[i, j, :].ravel())
         else:
-            raise(NotImplementedError("lavels shape doesn't match"))
+            raise(NotImplementedError("labels shape doesn't match"))
 
         labels_vect = np.array(labels_vect)
         logits_vect = np.vstack(logits_vect)
@@ -251,7 +256,7 @@ def prepare_model_and_data(args):
         config_class = GPTBigCodeConfigClassificationSeveralFunc if args.several_funcs_in_batch else GPTBigCodeConfig
         config, model_kwargs = config_class.from_pretrained(args.model_path,
             use_cache=not args.no_gradient_checkpointing,
-            load_in_8bit=True,
+            load_in_4bit=True,
             device_map={"": Accelerator().process_index},
             num_labels=2, return_unused_kwargs=True)
 
@@ -353,10 +358,11 @@ def run_training(args):
     # debug_params(trainer)
     trainer.train()
     print("Saving last checkpoint of the model")
-    model.save_pretrained(os.path.join(args.output_dir, "final_checkpoint/"))
-    # results = trainer.predict(test_data)
-    # print(f"Test results...")
-    # print(results.metrics)
+    model.save_pretrained(
+        os.path.join(args.output_dir, "final_checkpoint/"))
+    results = trainer.predict(test_data)
+    print(f"Test results...")
+    print(results.metrics)
 
 
 def run_test_peft(args):
@@ -372,10 +378,14 @@ def run_test_peft(args):
 
     if test_checkpoint_path:
         print(f"Loading: [{test_checkpoint_path}]...")
-        best_model_path = os.path.join(test_checkpoint_path, "adapter_model.bin")
+        best_model_path = os.path.join(test_checkpoint_path, "adapter_model.safetensors")
         print(os.path.exists(test_checkpoint_path))
         print(os.path.exists(best_model_path))
-        adapters_weights = torch.load(best_model_path)
+        #adapters_weights = torch.load(best_model_path)
+        adapters_weights = {}
+        with safe_open(best_model_path, framework="pt", device=0) as f:
+            for k in f.keys():
+                adapters_weights[k] = f.get_tensor(k)
         set_peft_model_state_dict(model, adapters_weights)
 
     results = trainer.predict(test_data)
