@@ -56,8 +56,8 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --use_focal_loss \
 --focal_loss_gamma 1 \
 --num_train_epochs 15 \
---batch_size 4 \
---gradient_accumulation_steps 160 \
+--batch_size 1 \
+--gradient_accumulation_steps 40 \
 --learning_rate 5e-6 \
 --weight_decay 0.05 \
 --num_warmup_steps 10 \
@@ -74,7 +74,6 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --split="test" \
 --run_test_peft \
 --lora_r 8 \
---seq_length 50 \
 --batch_size 1 \
 --checkpoint_dir='vul-llm-finetune/outputs/results_0' \
 --model_checkpoint_path='final_checkpoint' \
