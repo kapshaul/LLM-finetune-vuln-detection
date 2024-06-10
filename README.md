@@ -57,7 +57,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --focal_loss_gamma 1 \
 --num_train_epochs 15 \
 --batch_size 1 \
---gradient_accumulation_steps 40 \
+--gradient_accumulation_steps 16 \
 --learning_rate 5e-6 \
 --weight_decay 0.05 \
 --num_warmup_steps 10 \
