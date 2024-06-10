@@ -95,8 +95,8 @@ class ConstantLengthDataset(IterableDataset):
                         print(list(curr_elem.keys()))
                     elem_len = len(curr_elem[self.input_column_name])
 
-                    if self.curr_idx % 100 == 0:
-                        print(self.curr_idx, elem_len, buffer_len, self.seq_length)
+                    #if self.curr_idx % 100 == 0:
+                    #    print(self.curr_idx, elem_len, buffer_len, self.seq_length)
                     if elem_len >= self.seq_length:
                         self.curr_idx += 1
                         continue
