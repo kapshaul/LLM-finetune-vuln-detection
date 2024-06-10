@@ -30,8 +30,8 @@ source vd_venv/bin/activate
 
 ## **3. Use the below command to run (Specify the correct path for the file)**
  - Debug using a small model
-   
-```python vul-llm-finetune/LLM/starcoder/finetune/run.py \
+```
+python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --split="train" \
 --lora_r 8 \
@@ -44,11 +44,12 @@ source vd_venv/bin/activate
 --output_dir='vul-llm-finetune/outputs/results_test/' \
 --log_freq=10 \
 --several_funcs_in_batch \
---debug_on_small_model```
+--debug_on_small_model
+```
 
- - Train using LLM
-   
-```python vul-llm-finetune/LLM/starcoder/finetune/run.py \
+ - Train using LLM   
+```
+python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --split="train" \
 --lora_r 8 \
@@ -62,11 +63,12 @@ source vd_venv/bin/activate
 --output_dir='vul-llm-finetune/outputs/results_0/' \
 --log_freq=10 \
 --base_model starcoder \
---several_funcs_in_batch```
+--several_funcs_in_batch
+```
 
  - Test
-   
-```python vul-llm-finetune/LLM/starcoder/finetune/run.py \
+```
+python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --split="test" \
 --run_test_peft \
@@ -76,4 +78,5 @@ source vd_venv/bin/activate
 --checkpoint_dir='vul-llm-finetune/outputs/results_0' \
 --model_checkpoint_path='final_checkpoint' \
 --base_model starcoder \
---several_funcs_in_batch```
+--several_funcs_in_batch
+```
