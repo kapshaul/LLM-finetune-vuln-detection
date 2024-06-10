@@ -26,7 +26,6 @@ from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, set_peft_model_state_dict, AdaLoraConfig
 from safetensors import safe_open
 
-# Specify your project location
 sys.path.append("/Users/용환/Desktop/Study/School/AI 539 - NLP/Project/vul-llm-finetune/LLM/starcoder")
 from finetune.dataset import create_datasets_for_classification
 from finetune.gpt_big_code_classification_several_funcs import GPTBigCodeClassificationSeveralFunc, GPTBigCodeConfigClassificationSeveralFunc
@@ -88,7 +87,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     # Paths and data related arguments
-    parser.add_argument("--model_path", type=str, default="TheBloke/Wizard-Vicuna-13B-Uncensored-HF")
+    parser.add_argument("--model_path", type=str, default="TheBloke/Wizard-Vicunad-13B-Uncensored-HF")
     parser.add_argument("--dataset_name", type=str, default="HuggingFaceH4/CodeAlpaca_20K")
     parser.add_argument("--subset", type=str)
     parser.add_argument("--split", type=str)
@@ -281,12 +280,12 @@ def prepare_model_and_data(args):
     return {"model": model, "tokenizer":tokenizer, "data": (train_data, val_data, test_data)}
 
 def prepare_peft_model(model, args):
-    for name, module in model.named_modules():
-        print(f"{name} : {type(module).__name__}", flush=True)
+    #for name, module in model.named_modules():
+    #    print(f"{name} : {type(module).__name__}", flush=True)
     model = prepare_model_for_kbit_training(model)
 
-    for name, module in model.named_modules():
-        print(f"{name} : {type(module).__name__}", flush=True)
+    #for name, module in model.named_modules():
+    #    print(f"{name} : {type(module).__name__}", flush=True)
 
     if str(args.base_model).lower() == "codegen2":
         target_modules = ["qkv_proj", "out_proj", "fc_in", "fc_out"]
