@@ -75,8 +75,11 @@ class LoadBestModelCallback(TrainerCallback):
     def on_train_end(self, args, state: TrainerState, control: TrainerControl, **kwargs):
         if state.best_model_checkpoint is not None:
             print(f"Loading best peft model from {state.best_model_checkpoint} (score: {state.best_metric}).")
-            best_model_path = os.path.join(state.best_model_checkpoint, "adapter_model.bin")
-            adapters_weights = torch.load(best_model_path)
+            best_model_path = os.path.join(state.best_model_checkpoint, "adapter_model.safetensors")
+            adapters_weights = {}
+            with safe_open(best_model_path, framework="pt", device=0) as f:
+                for k in f.keys():
+                    adapters_weights[k] = f.get_tensor(k)
             model = kwargs["model"]
             set_peft_model_state_dict(model, adapters_weights)
         else:
@@ -87,7 +90,9 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     # Paths and data related arguments
-    parser.add_argument("--model_path", type=str, default="TheBloke/Wizard-Vicuna-13B-Uncensored-HF")
+    parser.add_argument("--model_path", type=str, default="./vul-llm-finetune/LLM/starcoder/quantized_model/")
+    parser.add_argument("--load_quantized_model", action="store_true", default=False)
+    parser.add_argument("--LLM_path", type=str, default="TheBloke/Wizard-Vicuna-13B-Uncensored-HF")
     parser.add_argument("--dataset_name", type=str, default="HuggingFaceH4/CodeAlpaca_20K")
     parser.add_argument("--subset", type=str)
     parser.add_argument("--split", type=str)
@@ -192,7 +197,7 @@ class EvalQuality():
         logits_vect = np.vstack(logits_vect)
         probs_pos_class = scipy.special.softmax(logits_vect, axis=-1)[:, 1]
         full_report = quality_full_report_val(probs_pos_class, labels_vect)
-        print(full_report)
+        #print(full_report)
         print(f"dataset size on evaluation: {len(labels_vect)}")
         report = full_report[2]
         if self.metric:
@@ -239,7 +244,7 @@ def prepare_model_and_data(args):
     print("Loading the model")
     # disable caching mechanism when using gradient checkpointing
     # model = AutoModelForCausalLM.from_pretrained(
-    tokenizer = AutoTokenizer.from_pretrained(args.model_path)
+    tokenizer = AutoTokenizer.from_pretrained(args.LLM_path)
     sep_token_id = get_sep_token_id(tokenizer, args)
 
     """add special tokens"""
@@ -250,11 +255,12 @@ def prepare_model_and_data(args):
         if  args.several_funcs_in_batch\
         else GPTBigCodeForSequenceClassification
 
+    model_path = args.model_path if args.load_quantized_model else args.LLM_path
     if args.debug_on_small_model:
         config = create_small_gptbigcode_config(tokenizer)
     else:
         config_class = GPTBigCodeConfigClassificationSeveralFunc if args.several_funcs_in_batch else GPTBigCodeConfig
-        config, model_kwargs = config_class.from_pretrained(args.model_path,
+        config, model_kwargs = config_class.from_pretrained(model_path,
             use_cache=not args.no_gradient_checkpointing,
             load_in_4bit=True,
             device_map={"": Accelerator().process_index},
@@ -271,7 +277,7 @@ def prepare_model_and_data(args):
         model = ModelClass(config)
     else:
         model = ModelClass.from_pretrained(
-            args.model_path,
+            model_path,
             config=config,
             **model_kwargs
         )
@@ -320,6 +326,7 @@ def prepare_trainer(model, train_data, val_data, args):
     print("Starting main loop")
 
     training_args = TrainingArguments(
+
         output_dir=args.output_dir,
         dataloader_drop_last=True,
         evaluation_strategy="epoch",
@@ -379,9 +386,8 @@ def run_test_peft(args):
     if test_checkpoint_path:
         print(f"Loading: [{test_checkpoint_path}]...")
         best_model_path = os.path.join(test_checkpoint_path, "adapter_model.safetensors")
-        print(os.path.exists(test_checkpoint_path))
-        print(os.path.exists(best_model_path))
-        #adapters_weights = torch.load(best_model_path)
+        #print(os.path.exists(test_checkpoint_path))
+        print(f"Best model path found: {os.path.exists(best_model_path)}")
         adapters_weights = {}
         with safe_open(best_model_path, framework="pt", device=0) as f:
             for k in f.keys():
@@ -420,8 +426,8 @@ if __name__ == "__main__":
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["TORCH_DISTRIBUTED_DEBUG"] = "DETAIL"
-    print(f"torch.__version__: {torch.__version__}")
-    print(f"torch.version.cuda: {torch.version.cuda}")
+    #print(f"torch.__version__: {torch.__version__}")
+    #print(f"torch.version.cuda: {torch.version.cuda}")
     args = get_args()
     set_seed(args.seed)
     main(args)
