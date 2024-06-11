@@ -31,60 +31,60 @@ source vd_venv/bin/activate
 ## **3. Use the below command to run (Specify the path for model saving and loading)**
  - Debug using a small model
 ```
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---split="train" \
---lora_r 8 \
---seq_length 50 \
---batch_size 4 \
---gradient_accumulation_steps 32 \
---learning_rate 1e-4 \
---weight_decay 0.05 \
---num_warmup_steps 1 \
---log_freq=1 \
---output_dir='vul-llm-finetune/outputs/results_test/' \
---delete_whitespaces \
---several_funcs_in_batch \
+python vul-llm-finetune/LLM/starcoder/finetune/run.py `
+--dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' `
+--split="train" `
+--lora_r 8 `
+--seq_length 50 `
+--batch_size 4 `
+--gradient_accumulation_steps 32 `
+--learning_rate 1e-4 `
+--weight_decay 0.05 `
+--num_warmup_steps 1 `
+--log_freq=1 `
+--output_dir='vul-llm-finetune/outputs/results_test/' `
+--delete_whitespaces `
+--several_funcs_in_batch `
 --debug_on_small_model
 ```
 
  - Train using LLM   
 ```
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---split="train" \
---lora_r 8 \
---use_focal_loss \
---focal_loss_gamma 1 \
---seq_length 2048 \
---num_train_epochs 15 \
---batch_size 1 \
---gradient_accumulation_steps 160 \
---learning_rate 1e-4 \
---weight_decay 0.05 \
---num_warmup_steps 1 \
---log_freq=1 \
---output_dir='vul-llm-finetune/outputs/results_0/' \
---ignore_large_functions \
---delete_whitespaces \
---base_model starcoder \
+python vul-llm-finetune/LLM/starcoder/finetune/run.py `
+--dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' `
+--split="train" `
+--lora_r 8 `
+--use_focal_loss `
+--focal_loss_gamma 1 `
+--seq_length 2048 `
+--num_train_epochs 15 `
+--batch_size 1 `
+--gradient_accumulation_steps 160 `
+--learning_rate 1e-4 `
+--weight_decay 0.05 `
+--num_warmup_steps 1 `
+--log_freq=1 `
+--output_dir='vul-llm-finetune/outputs/results_0/' `
+--ignore_large_functions `
+--delete_whitespaces `
+--base_model starcoder `
 --several_funcs_in_batch
 ```
 
  - Test
 ```
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---split="test" \
---run_test_peft \
---lora_r 8 \
---seq_length 2048 \
---batch_size 1 \
---log_freq=1 \
---checkpoint_dir='vul-llm-finetune/outputs/results_0' \
---model_checkpoint_path='final_checkpoint' \
---ignore_large_functions \
---delete_whitespaces \
---base_model starcoder \
+python vul-llm-finetune/LLM/starcoder/finetune/run.py `
+--dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' `
+--split="test" `
+--run_test_peft `
+--lora_r 8 `
+--seq_length 2048 `
+--batch_size 1 `
+--log_freq=1 `
+--checkpoint_dir='vul-llm-finetune/outputs/results_0' `
+--model_checkpoint_path='final_checkpoint' `
+--ignore_large_functions `
+--delete_whitespaces `
+--base_model starcoder `
 --several_funcs_in_batch
 ```
