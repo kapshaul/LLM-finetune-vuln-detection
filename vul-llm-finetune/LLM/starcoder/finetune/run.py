@@ -87,7 +87,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     # Paths and data related arguments
-    parser.add_argument("--model_path", type=str, default="TheBloke/Wizard-Vicunad-13B-Uncensored-HF")
+    parser.add_argument("--model_path", type=str, default="TheBloke/Wizard-Vicuna-13B-Uncensored-HF")
     parser.add_argument("--dataset_name", type=str, default="HuggingFaceH4/CodeAlpaca_20K")
     parser.add_argument("--subset", type=str)
     parser.add_argument("--split", type=str)
