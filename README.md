@@ -62,7 +62,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py `
 
 
 
-
+<!---
 ## **3. Use the below command to run (Specify the correct path for the file)**
  - Debug using a small model
 ```
@@ -122,3 +122,4 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py `
 --base_model starcoder `
 --several_funcs_in_batch
 ```
+---!>
