@@ -30,7 +30,7 @@ def create_substring_attention_mask(input_ids, tokenizer, sep_token_id):
     mask = np.zeros((len(input_ids), len(input_ids)), dtype=np.int64)
     for (first, last) in sequencies:
         mask[first: last, first: last] = 1
-    print(mask.sum(), len(sequencies))
+    #print(mask.sum(), len(sequencies))
     return mask
 
 
@@ -70,7 +70,7 @@ class ConstantLengthDataset(IterableDataset):
         self.weights = weights
 
         self.seq_num = len([seq for seq in self.__iter__()])
-        print("sequnce_num = ", self.seq_num)
+        #print("sequnce_num = ", self.seq_num)
 
     def reset_iter(self):
         self.indices = np.random.permutation(len(self.dataset))  # Get a random permutation of indices
@@ -91,8 +91,8 @@ class ConstantLengthDataset(IterableDataset):
             while True:
                 if self.curr_idx < len(self.dataset):
                     curr_elem = self.dataset[self.indices[self.curr_idx]]
-                    if self.curr_idx == 0:
-                        print(list(curr_elem.keys()))
+                    #if self.curr_idx == 0:
+                    #    print(list(curr_elem.keys()))
                     elem_len = len(curr_elem[self.input_column_name])
 
                     #if self.curr_idx % 100 == 0:
