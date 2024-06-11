@@ -3,7 +3,7 @@
  - python.exe -m pip install --upgrade pip
  - pip3 install numpy
  - pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
- - pip install git+https://github.com/huggingface/accelerate.git -q -U
+ - pip3 install git+https://github.com/huggingface/accelerate.git -q -U
  - pip3 install git+https://github.com/huggingface/transformers.git -q -U
  - pip3 install peft
  - pip3 install scipy
