@@ -281,6 +281,8 @@ def prepare_model_and_data(args):
             config=config,
             **model_kwargs
         )
+        if not args.load_quantized_model:
+            model.save_pretrained(args.model_path)
     train_data, val_data, test_data = create_datasets_for_classification(tokenizer, args, sep_token_id)
 
     return {"model": model, "tokenizer":tokenizer, "data": (train_data, val_data, test_data)}
