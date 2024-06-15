@@ -13,8 +13,8 @@
 ## **2. Code Changes**
  - Change: LLM/starcoder/finetune/run.py | (All) prepare_model_for_int8_training -> prepare_model_for_kbit_training
  - Change: LLM/starcoder/finetune/run.py | "/home/ma-user/modelarts/inputs/model_2/" -> "TheBloke/Wizard-Vicuna-13B-Uncensored-HF"
- - Add: vd_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
  - Change: LLM/starcoder/finetune/run.py | sys.path.append("Specify your python location")
+ - Add: vd_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
 
 # Instructions
 ## **1. Request GPU (Change based on your demand)**
