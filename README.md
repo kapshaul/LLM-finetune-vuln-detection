@@ -25,10 +25,7 @@ srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - #GPUs: 2
  - Memory: 20g
 
-## **2. Activate the virtual environment (This is customized for the code)**
-source vd_venv/bin/activate
-
-## **3. Use the below command to run (Specify the path for model saving and loading)**
+## **2. Use the below command to run (Specify the path for model saving and loading)**
  - Debug using a small model
 ```
 python vul-llm-finetune/LLM/starcoder/finetune/run.py \
