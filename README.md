@@ -14,7 +14,7 @@ The report for this project: [Link to PDF](https://github.com/neurokimchi/llm-fi
  - Change: LLM/starcoder/finetune/run.py | sys.path.append("Specify your python location")
  - Add: venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
 
-# Instructions
+# Implementation Instructions
 ## **1. Request GPU from HPC (Change based on your demand)**
 srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - Cluster: dgxh
