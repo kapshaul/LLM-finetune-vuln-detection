@@ -1,6 +1,7 @@
+# 
+
 # Preparation
 ## **1. Packages Installation (Python 3.10 used)**
- - python.exe -m pip install --upgrade pip
  - pip3 install numpy
  - pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
  - pip3 install git+https://github.com/huggingface/accelerate.git -q -U
