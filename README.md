@@ -9,7 +9,11 @@ The report for this project: [Link to PDF](https://github.com/neurokimchi/llm-fi
  - pip install -r requirements.txt
 
 ## **2. Code Changes**
- - Add: your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
+- Add: `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`
+  ```python
+  class GPTBigCodeConfig:
+      def set_special_params(self, args):
+          self.args = vars(args)
 
 # Implementation Instructions
 ## **1. Request GPU from HPC (Change based on your demand)**
