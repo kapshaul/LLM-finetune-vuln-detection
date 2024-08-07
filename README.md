@@ -9,10 +9,7 @@ The report for this project: [Link to PDF](https://github.com/neurokimchi/llm-fi
  - pip install -r requirements.txt
 
 ## **2. Code Changes**
- - Change: LLM/starcoder/finetune/run.py | (All) prepare_model_for_int8_training -> prepare_model_for_kbit_training
- - Change: LLM/starcoder/finetune/run.py | "/home/ma-user/modelarts/inputs/model_2/" -> "TheBloke/Wizard-Vicuna-13B-Uncensored-HF"
- - Change: LLM/starcoder/finetune/run.py | sys.path.append("Specify your python location")
- - Add: venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
+ - Add: your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py/GPTBigCodeConfig | def set_special_params(self, args): self.args = vars(args)
 
 # Implementation Instructions
 ## **1. Request GPU from HPC (Change based on your demand)**
