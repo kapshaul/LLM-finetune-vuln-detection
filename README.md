@@ -9,9 +9,12 @@ The report for this project: [Link to PDF](https://github.com/neurokimchi/llm-fi
  - pip install -r requirements.txt
 
 ## **2. Code Changes**
-- Add: `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`
+- Add the function into the transformers package, `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+
   ```python
   class GPTBigCodeConfig:
+      # ... other methods and attributes ...
+      
       def set_special_params(self, args):
           self.args = vars(args)
 
