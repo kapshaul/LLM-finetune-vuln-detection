@@ -1,0 +1,10 @@
+numpy
+torch
+torchvision
+torchaudio --index-url https://download.pytorch.org/whl/cu121
+git+https://github.com/huggingface/accelerate.git
+git+https://github.com/huggingface/transformers.git
+peft
+scipy
+scikit-learn
+bitsandbytes
