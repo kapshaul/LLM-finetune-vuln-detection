@@ -1,7 +1,7 @@
 # Research Replication
 This document provides detailed instructions for replicating our research project. The steps include setting up the necessary environment, making required code changes, and running the model on a High-Performance Computing (HPC) cluster.
 
-The report for this project: [Link to PDF](https://github.com/neurokimchi/llm-finetune-vuln-detection/blob/vuln_detection_finetune.pdf)
+The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/vuln_detection_finetune.pdf)
 
 
 # Preparation
