@@ -1,6 +1,6 @@
 # Research Replication: LLM Fine-tuning for Code Vulnerability Detection
 
-**Authors:** Yong-Hwan Lee & James Flora & Shijie Zhao & Yunhan Qiao
+**Authors:** Yong-Hwan Lee, James Flora, Shijie Zhao, and Yunhan Qiao
 
 ## Overview
 
