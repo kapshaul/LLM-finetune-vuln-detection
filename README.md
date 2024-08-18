@@ -1,14 +1,19 @@
-# Research Replication
+# Research Replication: LLM Fine-tuning for Code Vulnerability Detection
+
+**Authors:** Yong-Hwan Lee & James Flora & Shijie Zhao & Yunhan Qiao
+
+## Overview
+
 This document provides detailed instructions for replicating our research project. The steps include setting up the necessary environment, making required code changes, and running the model on a High-Performance Computing (HPC) cluster.
 
 The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/VD/vuln_detection_finetune.pdf)
 
 
-# Preparation
-## **1. Packages Installation (Python 3.10 used)**
+## Preparation
+### **1. Packages Installation (Python 3.10 used)**
  - pip install -r requirements.txt
 
-## **2. Code Changes**
+### **2. Code Changes**
 - Add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
   ```python
@@ -18,8 +23,8 @@ The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln
       def set_special_params(self, args):
           self.args = vars(args)
 
-# Implementation Instructions
-## **1. Request GPU from HPC (Change based on your demand)**
+## Implementation Instructions
+### **1. Request GPU from HPC (Change based on your demand)**
 srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - Cluster: dgxh
  - Time: 2-00:00:00
@@ -27,7 +32,7 @@ srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - #GPUs: 2
  - Memory: 20g
 
-## **2. Use the below command to run (Specify the path for model saving and loading)**
+### **2. Use the below command to run (Specify the path for model saving and loading)**
  - Debug using a small model
 ```
 python vul-llm-finetune/LLM/starcoder/finetune/run.py \
