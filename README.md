@@ -11,17 +11,20 @@ The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln
 
 ## Preparation
 ### **1. Packages Installation (Python 3.10 used)**
- - pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 ### **2. Code Changes**
-- Add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+Add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
-  ```python
-  class GPTBigCodeConfig:
-      # ... other methods and attributes ...
-      
-      def set_special_params(self, args):
-          self.args = vars(args)
+```python
+class GPTBigCodeConfig:
+    # ... other methods and attributes ...
+    
+    def set_special_params(self, args):
+        self.args = vars(args)
+```
 
 ## Implementation Instructions
 ### **1. Request GPU from HPC (Change based on your demand)**
