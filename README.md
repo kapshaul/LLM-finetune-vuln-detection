@@ -37,7 +37,7 @@ srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
 
 ### **2. Use the below command to run (Specify the path for model saving and loading)**
  - Debug using a small model
-```
+```bash
 python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --split="train" \
@@ -56,7 +56,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 ```
 
  - Train using LLM   
-```
+```bash
 python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --load_quantized_model \
@@ -79,7 +79,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 ```
 
  - Test
-```
+```bash
 python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
 --load_quantized_model \
