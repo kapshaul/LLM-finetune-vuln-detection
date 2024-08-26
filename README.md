@@ -124,3 +124,11 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 |          | X₁ with P₃    |       256       |     ignore     |  0.70   |   0.14   | NVIDIA A100 x2  |       18.3         |
 | **LoRA** | X₁ without P₃ |      2048       |    include     |  0.69   |   0.71   | NVIDIA V100 x8  |         ?          |
 |          | X₁ with P₃    |      2048       |    include     |  0.86   |   0.27   | NVIDIA V100 x8  |         ?          |
+
+## Conclusion
+
+In this paper, we recreate the findings of Shestov et al. in which we finetune the LLM, WizardCoder, for code vulnerability detection. Whilst the original authors use LoRA  to do so, we employ QLoRA to cut down on overall model size and are able to train such a model on a consumer-grade GPU. Despite this, we see significant degradation in performance metrics though it is clear that the model is still doing some sort of ”learning”. Further, we perform experimentation on the hyperparameters ”sequence length” and ”include large function”. We are able to conclude that including large functions is a strict positive for the model’s learning capabilities, but the evidence on sequence ength is inconclusive due to a baffling experiment with much higher results than the rest.
+
+## Reference
+
+[1] Shestov, A., Levichev, R., Mussabayev, R., Maslov, E., Cheshkov, A., & Zadorozhny, P. (2024). *Finetuning Large Language Models for Vulnerability Detection*. arXiv preprint arXiv:2401.17010. Retrieved from [https://arxiv.org/abs/2401.17010](https://arxiv.org/abs/2401.17010).
