@@ -4,7 +4,9 @@
 
 ## Overview
 
-The original research utilized LoRA, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are `frozen`, and only the adapters are trained, making the training process more cost-effective. In our project, we adopted QLoRA, which first quantizes the large language model (LLM) to a `4-bit float` to reduce its size, making it more manageable. After quantization, it applies the LoRA technique.
+The original research utilized LoRA, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are `frozen`, and only the adapters are trained, making the training process more cost-effective.
+
+Additionally, in our project, we adopted QLoRA, which first quantizes the large language model (LLM) to a `4-bit float` to reduce its size, making it more manageable. After quantization, it applies the LoRA technique.
 
 <div align="center">
     
