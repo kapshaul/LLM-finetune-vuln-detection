@@ -4,10 +4,28 @@
 
 ## Overview
 
-This document provides detailed instructions for replicating our research project. The steps include setting up the necessary environment, making required code changes, and running the model on a High-Performance Computing (HPC) cluster.
+The original research utilized LoRA, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are `frozen`, and only the adapters are trained, making the training process more cost-effective. In our project, we adopted QLoRA, which first quantizes the large language model (LLM) to a `4-bit float` to reduce its size, making it more manageable. After quantization, it applies the LoRA technique.
 
+<div align="center">
+    
+<img src="https://github.com/kapshaul/llm-finetune-vuln-detection/blob/VD/LoRA.png" width="500">
+
+**Figure 1**: LoRA adapter illustration
+
+</div>
+
+Figure 1 illustrates how LoRA adapters can be significantly smaller than the original parameter sizes. The number of parameters for the $A$ adapter is $r \times k$, and for the $B$ adapter, it is $d \times r$. Considering the original parameter matrix is $d \times k$, where both $d$ and $k$ are usually large for LLMs, choosing a small $r$ can effectively reduce the number of parameters. Thus, the original matrix $W \in \mathbb{R}^{d \times k}$ is much larger than the combined size of the adapters $A \in \mathbb{R}^{r \times k}$ and $B \in \mathbb{R}^{d \times r}$.
+
+For example, consider a layer in a LLM with a weight matrix $W \in \mathbb{R}^{1000 \times 100}$. The number of parameters for $W$ is $1000 \times 100 = 100,000$. If we set the LoRA rank to $r = 5$, the size of the LoRA adapters is only $1000 \times 5 + 100 \times 5 = 5,500$. This means the adapter size is around 5% of the original weight matrix, which is significantly manageable for training.
+
+<br>
+
+<br>
+
+In this project, we varied the `dataset`, `sequence length`, and `the use of focal loss`; measured the resulting performance changes compared to LoRA alone.
 The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/VD/vuln_detection_finetune.pdf)
 
+This document provides detailed instructions for replicating our research project. It includes steps for setting up the necessary environment, making required code changes, running the model on a High-Performance Computing (HPC) cluster, and presenting the results.
 
 ## Preparation
 ### **1. Packages Installation (Python 3.10 used)**
@@ -16,7 +34,7 @@ pip install -r requirements.txt
 ```
 
 ### **2. Code Changes**
-Add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+For a debug model compatibility, add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
 ```python
 class GPTBigCodeConfig:
@@ -93,3 +111,16 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 --base_model starcoder \
 --several_funcs_in_batch
 ```
+
+## Result
+
+|          | Dataset       | Sequence Length | Large Function | ROC AUC | F1 Score | GPU            | Training Time (hr) |
+|:--------:|:-------------:|:---------------:|:--------------:|:-------:|:--------:|:--------------:|:------------------:|
+| **QLoRA**| X₁ without P₃ |       512       |     ignore     |  0.53   |   0.65   |    Tesla T4     |        8.2         |
+|          | X₁ without P₃ |       512       |    include     |  0.56   |   0.66   | NVIDIA A100 x2  |        3.4         |
+|          | X₁ without P₃ |       256       |     ignore     |  0.51   |   0.63   |    Tesla T4     |        2.9         |
+|          | X₁ with P₃    |       512       |     ignore     |  0.68   |   0.14   |    GTX 4080     |       22.1         |
+|          | X₁ with P₃    |       512       |    include     |  0.72   |   0.17   | NVIDIA A100 x2  |       20.4         |
+|          | X₁ with P₃    |       256       |     ignore     |  0.70   |   0.14   | NVIDIA A100 x2  |       18.3         |
+| **LoRA** | X₁ without P₃ |      2048       |    include     |  0.69   |   0.71   | NVIDIA V100 x8  |         ?          |
+|          | X₁ with P₃    |      2048       |    include     |  0.86   |   0.27   | NVIDIA V100 x8  |         ?          |
