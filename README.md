@@ -6,7 +6,7 @@
 
 The original research utilized `LoRA`, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are *frozen*, and only the adapters are trained, making the training process more cost-effective.
 
-Additionally, in our project, we adopted `QLoRA`, which first quantizes the large language model (LLM) to a *4-bit float*, significantly reducing its size and making it more manageable. After quantization, the LoRA technique is applied. The 13B-WizardCoder model, originally around *26 GB* in size and likely requiring more than *30 GB* of VRAM, is reduced to approximately *7 GB* after quantization.
+In our project, we adopted `QLoRA`, which first quantizes the large language model (LLM) to a *4-bit float*, significantly reducing its size and making it more manageable. After quantization, the LoRA technique is applied. The 13B-WizardCoder model, originally around *26 GB* in size and likely requiring more than *30 GB* of VRAM, is reduced to approximately *7 GB* after quantization.
 
 <div align="center">
     
