@@ -35,7 +35,7 @@ This document provides detailed instructions for replicating our research projec
 pip install -r requirements.txt
 ```
 
-### **2. Code Changes**
+### **2. Code Change**
 For a debug model compatibility, add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
 ```python
@@ -46,7 +46,7 @@ class GPTBigCodeConfig:
         self.args = vars(args)
 ```
 
-## Implementation Instructions
+## Implementation Instruction
 ### **1. Request GPU from HPC (Change based on your demand)**
 srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - Cluster: dgxh
