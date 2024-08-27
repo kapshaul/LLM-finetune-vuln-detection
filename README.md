@@ -47,7 +47,7 @@ class GPTBigCodeConfig:
 ```
 
 ## Implementation Instruction
-### **1. Request GPU from HPC (Change based on your demand)**
+### **1. Request GPU from HPC (Based on OSU HPC server)**
 srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
  - Cluster: dgxh
  - Time: 2-00:00:00
