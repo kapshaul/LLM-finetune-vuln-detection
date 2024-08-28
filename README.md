@@ -124,8 +124,8 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 |          | X₁ with P₃    |       512       |     ignore     |  0.68   |   0.14   |    GTX 4080     |       22.1         |
 |          | X₁ with P₃    |       512       |    include     |  0.72   |   0.17   | NVIDIA A100 x2  |       20.4         |
 |          | X₁ with P₃    |       256       |     ignore     |  0.70   |   0.14   | NVIDIA A100 x2  |       18.3         |
-| **LoRA** | X₁ without P₃ |      2048       |    include     |  0.69   |   0.71   | NVIDIA V100 x8  |         ?          |
-|          | X₁ with P₃    |      2048       |    include     |  0.86   |   0.27   | NVIDIA V100 x8  |         ?          |
+| **LoRA** | X₁ without P₃ |      2048       |    include     |  0.69   |   0.71   | NVIDIA V100 x8  |                    |
+|          | X₁ with P₃    |      2048       |    include     |  0.86   |   0.27   | NVIDIA V100 x8  |                    |
 
 ## Conclusion
 
