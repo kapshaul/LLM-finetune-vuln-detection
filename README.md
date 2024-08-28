@@ -10,7 +10,7 @@ In our project, we adopted `QLoRA`, which first quantizes the large language mod
 
 <div align="center">
     
-<img src="https://github.com/kapshaul/llm-finetune-vuln-detection/blob/VD/LoRA.png" width="500">
+<img src="https://github.com/kapshaul/llm-finetune-vuln-detection/blob/master/LoRA.png" width="500">
 
 **Figure 1**: LoRA adapter illustration
 
@@ -25,7 +25,7 @@ For example, consider a layer in a LLM with a weight matrix $W \in \mathbb{R}^{1
 <br>
 
 In this project, we varied the `dataset`, `sequence length`, and `the use of focal loss`; measured the resulting performance changes compared to LoRA alone.
-The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/VD/vuln_detection_finetune.pdf)
+The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/master/vuln_detection_finetune.pdf)
 
 This document provides detailed instructions for replicating our research project. It includes steps for setting up the necessary environment, making required code changes, running the model on a High-Performance Computing (HPC) cluster, and presenting the results.
 
