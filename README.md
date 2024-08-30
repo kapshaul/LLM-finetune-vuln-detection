@@ -8,6 +8,8 @@ The original research focused on fine-tuning large language models (LLMs) for co
 
 In our project, we adopted `QLoRA`, which first quantizes the LLM to a *4-bit float*, significantly reducing its size. For example, the **13B-WizardCoder model**, originally around *26 GB* and typically requiring more than *30 GB* of VRAM, is reduced to approximately *7 GB* after quantization. Following quantization, the `LoRA` technique is applied for fine-tuning.
 
+### What is LoRA?
+
 <div align="center">
     
 <img src="https://github.com/kapshaul/llm-finetune-vuln-detection/blob/master/LoRA.png" width="500">
