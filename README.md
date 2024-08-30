@@ -20,7 +20,7 @@ In our project, we adopted `QLoRA`, which first quantizes the LLM to a *4-bit fl
 
 Figure 1 illustrates how LoRA adapters can be significantly smaller than the original parameter sizes. The number of parameters for the $A$ adapter is $r \times k$, and for the $B$ adapter, it is $d \times r$. Considering the original parameter matrix is $d \times k$, where both $d$ and $k$ are usually large for LLMs, choosing a small $r$ can effectively reduce the number of parameters. Thus, the original matrix $W \in \mathbb{R}^{d \times k}$ is much larger than the combined size of the adapters $A \in \mathbb{R}^{r \times k}$ and $B \in \mathbb{R}^{d \times r}$.
 
->For example, consider a layer in a LLM with a weight matrix $W \in \mathbb{R}^{1000 \times 100}$. The number of parameters for $W$ is $1000 \times 100 = 100,000$. If we set the LoRA rank to $r = 5$, the size of the LoRA adapters is only $1000 \times 5 + 100 \times 5 = 5,500$. This means the adapter size is around 5% of the original weight matrix $W$, which is significantly manageable for training.
+>For example, consider a layer in a LLM with a weight matrix $W \in \mathbb{R}^{1000 \times 100}$. The number of parameters for $W$ is $1000 \times 100 = 100,000$. If we set the LoRA rank to $r = 5$, the size of the LoRA adapters is only $1000 \times 5 + 100 \times 5 = 5,500$. This means the adapter size is around 5% of the original weight matrix $W$, which is significantly manageable for training as the original weight matrix $W$ remains frozen during the training phase.
 
 <br>
 
