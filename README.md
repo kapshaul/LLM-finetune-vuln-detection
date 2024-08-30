@@ -4,7 +4,7 @@
 
 ## Overview
 
-The original research utilized `LoRA`, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are *frozen*, and only the adapters are trained, making the training process more cost-effective.
+The research focuses on fine-tuning large language models (LLMs) for code vulnerability detection. The approach utilized `LoRA (Low-Rank Adaptation)`, a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are *frozen*, and only the adapters are trained, making the training process more cost-effective.
 
 In our project, we adopted `QLoRA`, which first quantizes the large language model (LLM) to a *4-bit float*, significantly reducing its size. For instance, the 13B-WizardCoder model, originally around *26 GB* in size and likely requiring more than *30 GB* of VRAM, is reduced to approximately *7 GB* after quantization. After quantization, the `LoRA` technique is applied.
 
