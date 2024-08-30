@@ -134,4 +134,5 @@ In this paper, we recreate the findings of Shestov et al. in which we finetune t
 ## Reference
 
 [1] Shestov, A., Levichev, R., Mussabayev, R., Maslov, E., Cheshkov, A., & Zadorozhny, P. (2024). *Finetuning Large Language Models for Vulnerability Detection*. arXiv preprint arXiv:2401.17010. Retrieved from [https://arxiv.org/abs/2401.17010](https://arxiv.org/abs/2401.17010).
+
 [2] Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., & Chen, W. (2021). LoRA: Low-Rank Adaptation of Large Language Models. arXiv preprint arXiv:2106.09685. Retrieved from https://arxiv.org/abs/2106.09685.
