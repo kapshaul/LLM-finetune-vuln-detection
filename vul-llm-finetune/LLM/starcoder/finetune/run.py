@@ -243,7 +243,6 @@ def get_sep_token_id(tokenizer, args):
 def prepare_model_and_data(args):
     print("Loading the model")
     # disable caching mechanism when using gradient checkpointing
-    # model = AutoModelForCausalLM.from_pretrained(
     tokenizer = AutoTokenizer.from_pretrained(args.LLM_path)
     sep_token_id = get_sep_token_id(tokenizer, args)
 
@@ -288,12 +287,7 @@ def prepare_model_and_data(args):
     return {"model": model, "tokenizer":tokenizer, "data": (train_data, val_data, test_data)}
 
 def prepare_peft_model(model, args):
-    #for name, module in model.named_modules():
-    #    print(f"{name} : {type(module).__name__}", flush=True)
     model = prepare_model_for_kbit_training(model)
-
-    #for name, module in model.named_modules():
-    #    print(f"{name} : {type(module).__name__}", flush=True)
 
     if str(args.base_model).lower() == "codegen2":
         target_modules = ["qkv_proj", "out_proj", "fc_in", "fc_out"]
@@ -388,8 +382,8 @@ def run_test_peft(args):
     if test_checkpoint_path:
         print(f"Loading: [{test_checkpoint_path}]...")
         best_model_path = os.path.join(test_checkpoint_path, "adapter_model.safetensors")
-        #print(os.path.exists(test_checkpoint_path))
-        print(f"Best model path found: {os.path.exists(best_model_path)}")
+
+      print(f"Best model path found: {os.path.exists(best_model_path)}")
         adapters_weights = {}
         with safe_open(best_model_path, framework="pt", device=0) as f:
             for k in f.keys():
