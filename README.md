@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ```
 
 ### **2. Code Change**
-For a debug model compatibility, add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+- For a debug model compatibility, add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
 ```python
 class GPTBigCodeConfig:
@@ -44,6 +44,11 @@ class GPTBigCodeConfig:
     
     def set_special_params(self, args):
         self.args = vars(args)
+```
+
+- Change the directory path at `./vul-llm-finetune/LLM/starcoder/run.py`
+```python
+sys.path.append("my_path/vul-llm-finetune/LLM/starcoder")
 ```
 
 ## Implementation Instruction
