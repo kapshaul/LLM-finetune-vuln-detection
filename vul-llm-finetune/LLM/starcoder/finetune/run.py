@@ -26,7 +26,7 @@ from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, set_peft_model_state_dict, AdaLoraConfig
 from safetensors import safe_open
 
-sys.path.append("/Users/용환/Desktop/Study/School/AI 539 - NLP/Project/vul-llm-finetune/LLM/starcoder")
+sys.path.append("my_path/vul-llm-finetune/LLM/starcoder")
 from finetune.dataset import create_datasets_for_classification
 from finetune.gpt_big_code_classification_several_funcs import GPTBigCodeClassificationSeveralFunc, GPTBigCodeConfigClassificationSeveralFunc
 from utils.calc_quality import quality_short_report_val, quality_full_report_val
