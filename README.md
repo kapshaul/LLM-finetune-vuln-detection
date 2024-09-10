@@ -36,15 +36,12 @@ pip install -r requirements.txt
 ```
 
 ### **2. Code Change**
-- For a debug model compatibility, add the following function to the transformers package at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+- For a debug model compatibility, Add the following function into the `GPTBigCodeConfig` class in the transformers package located at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
 
-Under this class,
 ```python
 class GPTBigCodeConfig:
     # ... other methods and attributes ...
-```
-Add this function at the end of the class,
-```python    
+
     def set_special_params(self, args):
         self.args = vars(args)
 ```
