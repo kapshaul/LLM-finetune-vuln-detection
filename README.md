@@ -134,7 +134,7 @@ python vul-llm-finetune/LLM/starcoder/finetune/run.py \
 
 ## Conclusion
 
-In this paper, we recreate the findings of *Shestov et al*. in which we finetune the LLM, WizardCoder, for code vulnerability detection. Whilst the original authors use LoRA  to do so, we employ QLoRA to cut down on overall model size and are able to train such a model on a consumer-grade GPU. Despite this, we see significant degradation in performance metrics though it is clear that the model is still doing some sort of *learning*. Further, we perform experimentation on the hyperparameters *sequence length* and *include large function*. We are able to conclude that including large functions is a strict positive for the model’s learning capabilities, but the evidence on sequence ength is inconclusive due to a baffling experiment with much higher results than the rest.
+In this paper, we recreate the findings of *Shestov et al*. in which we finetune the LLM, WizardCoder, for code vulnerability detection. Whilst the original authors use LoRA  to do so, we employ QLoRA to cut down on overall model size and are able to train such a model on a consumer-grade GPU. Despite this, we see significant degradation in performance metrics though it is clear that the model is still doing some sort of *learning*. Further, we perform experimentation on the hyperparameters *sequence length* and *include large function*. We are able to conclude that including large functions is a strict positive for the model’s learning capabilities, but the evidence on sequence length is inconclusive due to a baffling experiment with much higher results than the rest.
 
 ## Reference
 
