@@ -191,13 +191,13 @@ class EvalQuality():
                         labels_vect.append(labels[i, j])
                         logits_vect.append(logits[i, j, :].ravel())
         else:
-            raise(NotImplementedError("lavels shape doesn't match"))
+            raise(NotImplementedError("labels shape doesn't match"))
 
         labels_vect = np.array(labels_vect)
         logits_vect = np.vstack(logits_vect)
         probs_pos_class = scipy.special.softmax(logits_vect, axis=-1)[:, 1]
         full_report = quality_full_report_val(probs_pos_class, labels_vect)
-        print(full_report)
+        #print(full_report)
         print(f"dataset size on evaluation: {len(labels_vect)}")
         report = full_report[2]
         if self.metric:
@@ -287,12 +287,7 @@ def prepare_model_and_data(args):
     return {"model": model, "tokenizer":tokenizer, "data": (train_data, val_data, test_data)}
 
 def prepare_peft_model(model, args):
-    for name, module in model.named_modules():
-        print(f"{name} : {type(module).__name__}", flush=True)
     model = prepare_model_for_kbit_training(model)
-
-    for name, module in model.named_modules():
-        print(f"{name} : {type(module).__name__}", flush=True)
 
     if str(args.base_model).lower() == "codegen2":
         target_modules = ["qkv_proj", "out_proj", "fc_in", "fc_out"]
@@ -327,6 +322,7 @@ def prepare_trainer(model, train_data, val_data, args):
     print("Starting main loop")
 
     training_args = TrainingArguments(
+
         output_dir=args.output_dir,
         dataloader_drop_last=True,
         evaluation_strategy="epoch",
@@ -386,8 +382,8 @@ def run_test_peft(args):
     if test_checkpoint_path:
         print(f"Loading: [{test_checkpoint_path}]...")
         best_model_path = os.path.join(test_checkpoint_path, "adapter_model.safetensors")
-        print(os.path.exists(test_checkpoint_path))
-        print(os.path.exists(best_model_path))
+
+      print(f"Best model path found: {os.path.exists(best_model_path)}")
         adapters_weights = {}
         with safe_open(best_model_path, framework="pt", device=0) as f:
             for k in f.keys():
@@ -426,8 +422,8 @@ if __name__ == "__main__":
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["TORCH_DISTRIBUTED_DEBUG"] = "DETAIL"
-    print(f"torch.__version__: {torch.__version__}")
-    print(f"torch.version.cuda: {torch.version.cuda}")
+    #print(f"torch.__version__: {torch.__version__}")
+    #print(f"torch.version.cuda: {torch.version.cuda}")
     args = get_args()
     set_seed(args.seed)
     main(args)
