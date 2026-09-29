@@ -6,6 +6,7 @@ import tarfile
 import tempfile
 import shutil
 import math
+import gc
 
 import numpy as np
 import scipy.special
@@ -30,6 +31,9 @@ from finetune.gpt_big_code_classification_several_funcs import GPTBigCodeClassif
 from utils.calc_quality import quality_short_report_val, quality_full_report_val
 from debug_funcs import _build_debug_param_to_name_mapping_our_debug, debug_params
 
+# Empty VRAM cache
+gc.collect()
+torch.cuda.empty_cache()
 
 transformers.logging.set_verbosity_info()
 logger = logging.getLogger(__name__)
@@ -82,7 +86,9 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     # Paths and data related arguments
-    parser.add_argument("--model_path", type=str, default="/home/ma-user/modelarts/inputs/model_2/")
+    parser.add_argument("--model_path", type=str, default="./vul-llm-finetune/LLM/starcoder/quantized_model/")
+    parser.add_argument("--load_quantized_model", action="store_true", default=False)
+    parser.add_argument("--LLM_path", type=str, default="TheBloke/Wizard-Vicuna-13B-Uncensored-HF")
     parser.add_argument("--dataset_name", type=str, default="HuggingFaceH4/CodeAlpaca_20K")
     parser.add_argument("--subset", type=str)
     parser.add_argument("--split", type=str)
@@ -103,7 +109,7 @@ def get_args():
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--gradient_accumulation_steps", type=int, default=16)
     parser.add_argument("--eos_token_id", type=int, default=49152)
-    parser.add_argument("--lora_r", type=int, default=16)
+    parser.add_argument("--lora_r", type=int, default=8)
     parser.add_argument("--lora_alpha", type=int, default=32)
     parser.add_argument("--lora_dropout", type=float, default=0.05)
 
@@ -233,8 +239,7 @@ def get_sep_token_id(tokenizer, args):
 def prepare_model_and_data(args):
     print("Loading the model")
     # disable caching mechanism when using gradient checkpointing
-    # model = AutoModelForCausalLM.from_pretrained(
-    tokenizer = AutoTokenizer.from_pretrained(args.model_path)
+    tokenizer = AutoTokenizer.from_pretrained(args.LLM_path)
     sep_token_id = get_sep_token_id(tokenizer, args)
 
     """add special tokens"""
@@ -245,13 +250,14 @@ def prepare_model_and_data(args):
         if  args.several_funcs_in_batch\
         else GPTBigCodeForSequenceClassification
 
+    model_path = args.model_path if args.load_quantized_model else args.LLM_path
     if args.debug_on_small_model:
         config = create_small_gptbigcode_config(tokenizer)
     else:
         config_class = GPTBigCodeConfigClassificationSeveralFunc if args.several_funcs_in_batch else GPTBigCodeConfig
-        config, model_kwargs = config_class.from_pretrained(args.model_path,
+        config, model_kwargs = config_class.from_pretrained(model_path,
             use_cache=not args.no_gradient_checkpointing,
-            load_in_8bit=True,
+            load_in_4bit=True,
             device_map={"": Accelerator().process_index},
             num_labels=2, return_unused_kwargs=True)
 
@@ -266,10 +272,12 @@ def prepare_model_and_data(args):
         model = ModelClass(config)
     else:
         model = ModelClass.from_pretrained(
-            args.model_path,
+            model_path,
             config=config,
             **model_kwargs
         )
+        if not args.load_quantized_model:
+            model.save_pretrained(args.model_path)
     train_data, val_data, test_data = create_datasets_for_classification(tokenizer, args, sep_token_id)
 
     return {"model": model, "tokenizer":tokenizer, "data": (train_data, val_data, test_data)}
