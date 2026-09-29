@@ -12,7 +12,7 @@ A key innovation of our work is the incorporation of our custom adaptation of `Q
 
 <div align="center">
     
-<img src="https://github.com/kapshaul/llm-finetune-vuln-detection/blob/master/LoRA.png" width="500">
+<img src="https://github.com/kapshaul/llm-finetuning-vulnerability-detection/blob/master/LoRA.png" width="500">
 
 **Figure 1**: LoRA adapter illustration
 
@@ -25,7 +25,7 @@ Figure 1 illustrates how LoRA adapters can be significantly smaller than the ori
 <br>
 
 In this project, we varied the `dataset`, `sequence length`, and `the use of focal loss`; measured the resulting performance changes compared to LoRA alone.
-The report for this project: [PDF](https://github.com/kapshaul/llm-finetune-vuln-detection/blob/master/vuln_detection_finetune.pdf)
+The report for this project: [PDF](https://github.com/kapshaul/llm-finetuning-vulnerability-detection/blob/master/vuln_detection_finetune.pdf)
 
 This document provides detailed instructions for replicating our research project. It includes steps for setting up the necessary environment, making required code changes, running the model on a High-Performance Computing (HPC) cluster, and presenting the results.
 
