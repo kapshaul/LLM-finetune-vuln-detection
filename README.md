@@ -2,143 +2,93 @@
 
 **Authors:** Yong-Hwan Lee, James Flora, Shijie Zhao, and Yunhan Qiao
 
-## Overview
+A course research project at Oregon State University that reproduces *Finetuning Large Language Models for Vulnerability Detection* by Shestov et al. (2024). The study treats vulnerability detection as binary classification of Java functions: an LLM encodes each function, and a small classification head predicts whether that function is vulnerable. The original authors trained LoRA adapters. This project adapts their released code to train with 4-bit quantized weights plus LoRA (QLoRA) and records how sequence length and the handling of long functions relate to the results.
 
-This project replicates and builds upon the study by *Shestov et al. (2024)*, aiming to validate and extend their findings. The original research focused on fine-tuning large language models (LLMs) for code vulnerability detection. The approach utilized `LoRA` (Low-Rank Adaptation), a technique that involves adding adapters within layers for fine-tuning. During this process, the original model parameters are *frozen*, and only the adapters are trained, making the training process more cost-effective.
+**Read the [report (PDF)](vuln_detection_finetune.pdf)** · [reproduction notes](docs/reproduction.md) · [experiment results](docs/experiment-results.md)
 
-A key innovation of our work is the incorporation of our custom adaptation of `QLoRA`, which first quantizes the LLM to a *4-bit float*, significantly reducing its size. For example, the **13B-WizardCoder model**, originally around *26 GB* and typically requiring more than *30 GB* of VRAM, is reduced to approximately *7 GB* after quantization. Following quantization, the `LoRA` technique is applied for fine-tuning.
+> **Current status:** this repository is a research snapshot, not a turnkey package. `run.py` contains an indentation error and a placeholder import path, so Python rejects the file before argument parsing, and even `--help` fails. The dependencies are unpinned, and a model compatible with the hardcoded GPTBigCode classes has to be chosen. See [docs/reproduction.md](docs/reproduction.md#known-blockers). The project QLoRA measurements are historical results from the team's 2024 work; the LoRA baselines are quoted from the upstream study. Neither set has been reproduced from this snapshot.
 
-### What is LoRA?
+## Background: LoRA and QLoRA
 
 <div align="center">
-    
-<img src="https://github.com/kapshaul/llm-finetuning-vulnerability-detection/blob/master/LoRA.png" width="500">
+
+<img src="LoRA.png" width="500" alt="LoRA adapter illustration: a frozen weight matrix W with trainable low-rank matrices A and B">
 
 **Figure 1**: LoRA adapter illustration
 
 </div>
 
-Figure 1 illustrates how LoRA adapters can be significantly smaller than the original parameter sizes. The number of parameters for the $A$ adapter is $r \times k$, and for the $B$ adapter, it is $d \times r$. Considering the original parameter matrix is $d \times k$, where both $d$ and $k$ are usually large for LLMs, choosing a small $r$ can effectively reduce the number of parameters. Thus, the original matrix $W \in \mathbb{R}^{d \times k}$ is much larger than the combined size of the adapters $A \in \mathbb{R}^{r \times k}$ and $B \in \mathbb{R}^{d \times r}$.
+LoRA (Hu et al., 2021) freezes a pretrained weight matrix $W \in \mathbb{R}^{d \times k}$ and learns a low-rank update $\Delta W = BA$, where $A \in \mathbb{R}^{r \times k}$ and $B \in \mathbb{R}^{d \times r}$. Only $A$ and $B$ are trained. They hold $r(d + k)$ parameters, compared with $dk$ in $W$, so a small rank $r$ makes fine-tuning much cheaper.
 
->For example, consider a layer in a LLM with a weight matrix $W \in \mathbb{R}^{1000 \times 100}$. The number of parameters for $W$ is $1000 \times 100 = 100,000$. If we set the LoRA rank to $r = 5$, the size of the LoRA adapters is only $1000 \times 5 + 100 \times 5 = 5,500$. This means the adapter size is around 5% of the original weight matrix $W$, which is significantly manageable for training as the original weight matrix $W$ remains frozen during the training phase.
+> For example, a layer with $W \in \mathbb{R}^{1000 \times 100}$ has $100{,}000$ parameters. With rank $r = 5$, the adapters hold $1000 \times 5 + 100 \times 5 = 5{,}500$ parameters, about 5% of $W$. Meanwhile, $W$ stays frozen.
 
-<br>
+QLoRA (Dettmers et al., 2023) also stores the frozen weights in 4-bit NormalFloat. The report estimates that quantization reduced the 13B model's footprint from about 26 GB to about 6 GB. That is a size estimate for the stored weights, not a measured training-memory requirement for this snapshot.
 
-In this project, we varied the `dataset`, `sequence length`, and `the use of focal loss`; measured the resulting performance changes compared to LoRA alone.
-The report for this project: [PDF](https://github.com/kapshaul/llm-finetuning-vulnerability-detection/blob/master/vuln_detection_finetune.pdf)
+## Provenance
 
-This document provides detailed instructions for replicating our research project. It includes steps for setting up the necessary environment, making required code changes, running the model on a High-Performance Computing (HPC) cluster, and presenting the results.
+- **Upstream code.** This repository preserves the upstream history through commit [`48e6d41`](https://github.com/rmusab/vul-llm-finetune/commit/48e6d41d83cf6e250342304fa8cd5f07beba0451) of [rmusab/vul-llm-finetune](https://github.com/rmusab/vul-llm-finetune), the code repository linked in Section 4.4 of Shestov et al. Commit `889b022` then moved that tree into `vul-llm-finetune/`. The function-packing classifier (`GPTBigCodeClassificationSeveralFunc`), focal loss, the classification setup, and the Java datasets come from upstream; the classifier and focal-loss modules are byte-identical to upstream. The nested [LLM](vul-llm-finetune/LLM/README.md) and [LineVul](vul-llm-finetune/LineVul/README.md) READMEs are upstream documentation and describe the original authors' environment, not this project's setup.
+- **Local changes.** The QLoRA method is from Dettmers et al.; this project's work is adapting the upstream code to use it and running the experiments. The later commits in `run.py` add 4-bit loading with a saved quantized copy (`--LLM_path`, `--model_path`, `--load_quantized_model`; `89aa13d`), safetensors adapter checkpoints (`603e0df`), and test metrics after training (`0ed2082`), along with environment/debug compatibility and logging changes.
+- **Repository name.** This repository was previously published as `kapshaul/LLM-finetune-vuln-detection`.
 
-## Preparation
-### **1. Packages Installation (Python 3.10 used)**
-```bash
-pip install -r requirements.txt
+## Repository layout
+
+```text
+.
+├── README.md
+├── docs/
+│   ├── reproduction.md           # blockers, environment notes, intended commands
+│   └── experiment-results.md     # reported table, figures and interpretation
+├── LoRA.png                      # Figure 1 above
+├── requirements.txt              # project-level Python dependencies (unpinned)
+├── vuln_detection_finetune.pdf   # project report
+└── vul-llm-finetune/             # code from rmusab/vul-llm-finetune, adapted
+    ├── Datasets/
+    │   ├── with_p3/java_k_1_strict_2023_06_30.tar.gz       # "X₁ with P₃"
+    │   └── without_p3/java_k_1_strict_2023_07_03.tar.gz    # "X₁ without P₃"
+    ├── LLM/
+    │   ├── README.md, llm.Dockerfile, requirements.txt     # upstream docs and container
+    │   └── starcoder/
+    │       ├── finetune/
+    │       │   ├── run.py                                  # main entry point: train / test
+    │       │   ├── dataset.py                              # tar.gz loading, batch packing
+    │       │   ├── gpt_big_code_classification_several_funcs.py  # per-function classifier
+    │       │   ├── merge_peft_adapters.py                  # merge adapters into a base model
+    │       │   └── debug_funcs.py                          # DDP debugging helpers
+    │       ├── utils/calc_quality.py, utils/focal_loss.py  # metrics and focal loss
+    │       └── next_token_prediction/llm_finetune_check.py # prompt-based check (not used in report)
+    ├── LineVul/                  # upstream LineVul baseline (not used in report)
+    └── ContraBERT/               # upstream ContraBERT baseline (not used in report)
 ```
 
-### **2. Code Change**
-- For a debug model compatibility, Add the following function into the `GPTBigCodeConfig` class in the transformers package located at `your_venv/lib/python3.10/site-packages/transformers/models/gpt_bigcode/configuration_gpt_bigcode.py`:
+The experiments in the report use only `LLM/starcoder/finetune/run.py` and the modules it imports.
 
-```python
-class GPTBigCodeConfig:
-    # ... other methods and attributes ...
+## What is and isn't included
 
-    def set_special_params(self, args):
-        self.args = vars(args)
-```
+| Item | Status |
+| --- | --- |
+| Java datasets | Both archives are included. Each holds `train.jsonl`, `valid.jsonl`, and `test.jsonl`; the loader uses the `code` and `target` fields. Checked-in counts: **with P₃** 13,247 / 5,131 / 4,576 (train/valid/test), 22,954 in total; **without P₃** 810 / 272 / 252, 1,334 in total. The report's count for "with P₃" is 22,945, which appears to be a digit transposition. |
+| Base LLM weights | Not included. `--LLM_path` defaults to `TheBloke/Wizard-Vicuna-13B-Uncensored-HF`, but the report says it used WizardCoder, and the model classes are hardcoded to GPTBigCode. The default does not identify the trained model, and its compatibility is unverified. |
+| Quantized model cache | Not included. `--load_quantized_model` reads it from `--model_path`. Without that flag, the script loads `--LLM_path` in 4-bit and saves the result to `--model_path`. |
+| Trained adapters / checkpoints | Not included. The reported results can't be re-evaluated without retraining. |
+| Training logs | Not included. The per-epoch curves survive only as figures in the PDF. |
 
-- Change the directory path at `./vul-llm-finetune/LLM/starcoder/run.py`
-```python
-sys.path.append("my_path/vul-llm-finetune/LLM/starcoder")
-```
+## Entry points
 
-## Implementation Instruction
-### **1. Request GPU from HPC (Based on OSU HPC server)**
-srun -p dgxh --time=2-00:00:00 -c 2 --gres=gpu:2 --mem=20g --pty bash
- - Cluster: dgxh
- - Time: 2-00:00:00
- - #CPUs: 2
- - #GPUs: 2
- - Memory: 20g
+- **Train:** `run.py` with neither `--run_test` nor `--run_test_peft`. It fine-tunes LoRA adapters, evaluates on the validation split after each epoch, and keeps the adapter with the best validation ROC AUC. At the end of training, it reloads that adapter, saves it to `<output_dir>/final_checkpoint/`, and prints test metrics.
+- **Evaluate a trained adapter:** `run.py --run_test_peft --checkpoint_dir <dir> --model_checkpoint_path <subdir>`.
+- **Evaluate without adapters:** `run.py --run_test`.
 
-### **2. Use the below command to run (Specify the path for model saving and loading)**
- - Debug using a small model
-```bash
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---split="train" \
---lora_r 8 \
---seq_length 512 \
---batch_size 1 \
---gradient_accumulation_steps 160 \
---learning_rate 1e-4 \
---weight_decay 0.05 \
---num_warmup_steps 2 \
---log_freq=1 \
---output_dir='vul-llm-finetune/outputs/results_test/' \
---delete_whitespaces \
---several_funcs_in_batch \
---debug_on_small_model
-```
+`--split` does not select the mode. For argument meanings, environment caveats, and example commands, see [docs/reproduction.md](docs/reproduction.md).
 
- - Train using LLM   
-```bash
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---load_quantized_model \
---split="train" \
---lora_r 8 \
---use_focal_loss \
---focal_loss_gamma 1 \
---seq_length 512 \
---num_train_epochs 15 \
---batch_size 1 \
---gradient_accumulation_steps 160 \
---learning_rate 1e-4 \
---weight_decay 0.05 \
---num_warmup_steps 2 \
---log_freq=1 \
---output_dir='vul-llm-finetune/outputs/results_0/' \
---delete_whitespaces \
---base_model starcoder \
---several_funcs_in_batch
-```
+## Results summary
 
- - Test
-```bash
-python vul-llm-finetune/LLM/starcoder/finetune/run.py \
---dataset_tar_gz='vul-llm-finetune/Datasets/with_p3/java_k_1_strict_2023_06_30.tar.gz' \
---load_quantized_model \
---split="test" \
---run_test_peft \
---lora_r 8 \
---seq_length 512 \
---checkpoint_dir='vul-llm-finetune/outputs/results_0' \
---model_checkpoint_path='final_checkpoint' \
---delete_whitespaces \
---base_model starcoder \
---several_funcs_in_batch
-```
+The team's best recorded QLoRA runs reached a test ROC AUC of 0.72 on the imbalanced "X₁ with P₃" dataset and an F1 score of 0.66 on the balanced "X₁ without P₃" dataset. Both are below the LoRA numbers published by Shestov et al. (0.86 ROC AUC and 0.71 F1), which this project quotes rather than reruns, so the comparison is not a controlled ablation. For each dataset, the table has one 512-token pair that differs in long-function handling ("ignore" drops over-length functions, "include" truncates them), and the "include" run scored higher in both pairs. That is an association from two comparisons: the paired runs also used different GPUs, the number of repetitions is not stated, and no significance test was done. The evidence on sequence length was inconclusive.
 
-## Result
+The snapshot's evaluation code picks the F1-maximizing threshold on the same labels it scores, including the test split. This affects metrics printed by that code path and may affect the project measurements if they used it; it does not establish how the quoted upstream baselines were evaluated. The full table, figure references, and caveats are in [docs/experiment-results.md](docs/experiment-results.md).
 
-|          | Dataset       | Sequence Length | Large Function | ROC AUC | F1 Score | GPU            | Training Time (hr) |
-|:--------:|:-------------:|:---------------:|:--------------:|:-------:|:--------:|:--------------:|:------------------:|
-| **QLoRA**| X₁ without P₃ |       512       |     ignore     |  0.53   |   0.65   |    Tesla T4     |        8.2         |
-|          | X₁ without P₃ |       512       |    include     |  0.56   |   0.66   | NVIDIA A100 x2  |        3.4         |
-|          | X₁ without P₃ |       256       |     ignore     |  0.51   |   0.63   |    Tesla T4     |        2.9         |
-|          | X₁ with P₃    |       512       |     ignore     |  0.68   |   0.14   |    RTX 4080     |       22.1         |
-|          | X₁ with P₃    |       512       |    include     |  0.72   |   0.17   | NVIDIA A100 x2  |       20.4         |
-|          | X₁ with P₃    |       256       |     ignore     |  0.70   |   0.14   | NVIDIA A100 x2  |       18.3         |
-| **LoRA** | X₁ without P₃ |      2048       |    include     |  0.69   |   0.71   | NVIDIA V100 x8  |                    |
-|          | X₁ with P₃    |      2048       |    include     |  0.86   |   0.27   | NVIDIA V100 x8  |                    |
+## References
 
-## Conclusion
-
-In this paper, we recreate the findings of *Shestov et al*. in which we finetune the LLM, WizardCoder, for code vulnerability detection. Whilst the original authors use LoRA  to do so, we employ QLoRA to cut down on overall model size and are able to train such a model on a consumer-grade GPU. Despite this, we see significant degradation in performance metrics though it is clear that the model is still doing some sort of *learning*. Further, we perform experimentation on the hyperparameters *sequence length* and *include large function*. We are able to conclude that including large functions is a strict positive for the model’s learning capabilities, but the evidence on sequence length is inconclusive due to a baffling experiment with much higher results than the rest.
-
-## Reference
-
-[1] Shestov, A., Levichev, R., Mussabayev, R., Maslov, E., Cheshkov, A., & Zadorozhny, P. (2024). *Finetuning Large Language Models for Vulnerability Detection*. arXiv preprint arXiv:2401.17010. Retrieved from [https://arxiv.org/abs/2401.17010](https://arxiv.org/abs/2401.17010).
+[1] Shestov, A., Levichev, R., Mussabayev, R., Maslov, E., Cheshkov, A., & Zadorozhny, P. (2024). *Finetuning Large Language Models for Vulnerability Detection*. arXiv preprint arXiv:2401.17010. Retrieved from [https://arxiv.org/abs/2401.17010](https://arxiv.org/abs/2401.17010). Code: [https://github.com/rmusab/vul-llm-finetune](https://github.com/rmusab/vul-llm-finetune).
 
 [2] Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., & Chen, W. (2021). LoRA: Low-Rank Adaptation of Large Language Models. arXiv preprint arXiv:2106.09685. Retrieved from https://arxiv.org/abs/2106.09685.
 
