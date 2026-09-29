@@ -365,10 +365,11 @@ def run_training(args):
     # debug_params(trainer)
     trainer.train()
     print("Saving last checkpoint of the model")
-    model.save_pretrained(os.path.join(args.output_dir, "final_checkpoint/"))
-    # results = trainer.predict(test_data)
-    # print(f"Test results...")
-    # print(results.metrics)
+    model.save_pretrained(
+        os.path.join(args.output_dir, "final_checkpoint/"))
+    results = trainer.predict(test_data)
+    print(f"Test results...")
+    print(results.metrics)
 
 
 def run_test_peft(args):
