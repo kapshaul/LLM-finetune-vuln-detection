@@ -4,7 +4,7 @@ from transformers.debug_utils import DebugOption
 from transformers.utils import is_sagemaker_mp_enabled
 from transformers import TrainerState
 from transformers.deepspeed import deepspeed_init, deepspeed_load_checkpoint
-from transformers.trainer_utils import has_length, ShardedDDPOption
+from transformers.trainer_utils import has_length#, ShardedDDPOption
 
 
 def _build_debug_param_to_name_mapping_our_debug(ddp_model, parameters):
@@ -109,7 +109,7 @@ def debug_params(trainer, batch_size=1):
 
     delay_optimizer_creation = (
             trainer.sharded_ddp is not None
-            and trainer.sharded_ddp != ShardedDDPOption.SIMPLE
+            #and trainer.sharded_ddp != ShardedDDPOption.SIMPLE
             or is_sagemaker_mp_enabled()
             or trainer.fsdp is not None
     )

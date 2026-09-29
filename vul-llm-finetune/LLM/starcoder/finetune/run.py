@@ -22,9 +22,9 @@ from transformers import (AutoConfig, AutoModelForCausalLM, AutoTokenizer,
                           TrainingArguments, set_seed)
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 
-from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training, set_peft_model_state_dict, AdaLoraConfig
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, set_peft_model_state_dict, AdaLoraConfig
 
-sys.path.append("/home/ma-user/modelarts/inputs/code_1")
+sys.path.append("my_path/vul-llm-finetune/LLM/starcoder")
 from finetune.dataset import create_datasets_for_classification
 from finetune.gpt_big_code_classification_several_funcs import GPTBigCodeClassificationSeveralFunc, GPTBigCodeConfigClassificationSeveralFunc
 from utils.calc_quality import quality_short_report_val, quality_full_report_val
@@ -277,7 +277,7 @@ def prepare_model_and_data(args):
 def prepare_peft_model(model, args):
     for name, module in model.named_modules():
         print(f"{name} : {type(module).__name__}", flush=True)
-    model = prepare_model_for_int8_training(model)
+    model = prepare_model_for_kbit_training(model)
 
     for name, module in model.named_modules():
         print(f"{name} : {type(module).__name__}", flush=True)
