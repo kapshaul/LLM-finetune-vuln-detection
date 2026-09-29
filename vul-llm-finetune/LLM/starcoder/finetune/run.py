@@ -24,6 +24,7 @@ from transformers import (AutoConfig, AutoModelForCausalLM, AutoTokenizer,
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
 
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, set_peft_model_state_dict, AdaLoraConfig
+from safetensors import safe_open
 
 sys.path.append("my_path/vul-llm-finetune/LLM/starcoder")
 from finetune.dataset import create_datasets_for_classification
@@ -56,7 +57,7 @@ class SaveBestModelCallback(TrainerCallback):
 
             kwargs["model"].save_pretrained(checkpoint_folder)
 
-            pytorch_model_path = os.path.join(checkpoint_folder, "pytorch_model.bin")
+            pytorch_model_path = os.path.join(checkpoint_folder, "adapter_model.bin")
             torch.save({}, pytorch_model_path)
 
             print(f"New best model found! Saving model with AUC {state.best_metric} to {checkpoint_folder}")
@@ -74,8 +75,11 @@ class LoadBestModelCallback(TrainerCallback):
     def on_train_end(self, args, state: TrainerState, control: TrainerControl, **kwargs):
         if state.best_model_checkpoint is not None:
             print(f"Loading best peft model from {state.best_model_checkpoint} (score: {state.best_metric}).")
-            best_model_path = os.path.join(state.best_model_checkpoint, "adapter_model.bin")
-            adapters_weights = torch.load(best_model_path)
+            best_model_path = os.path.join(state.best_model_checkpoint, "adapter_model.safetensors")
+            adapters_weights = {}
+            with safe_open(best_model_path, framework="pt", device=0) as f:
+                for k in f.keys():
+                    adapters_weights[k] = f.get_tensor(k)
             model = kwargs["model"]
             set_peft_model_state_dict(model, adapters_weights)
         else:
@@ -380,10 +384,13 @@ def run_test_peft(args):
 
     if test_checkpoint_path:
         print(f"Loading: [{test_checkpoint_path}]...")
-        best_model_path = os.path.join(test_checkpoint_path, "adapter_model.bin")
+        best_model_path = os.path.join(test_checkpoint_path, "adapter_model.safetensors")
         print(os.path.exists(test_checkpoint_path))
         print(os.path.exists(best_model_path))
-        adapters_weights = torch.load(best_model_path)
+        adapters_weights = {}
+        with safe_open(best_model_path, framework="pt", device=0) as f:
+            for k in f.keys():
+                adapters_weights[k] = f.get_tensor(k)
         set_peft_model_state_dict(model, adapters_weights)
 
     results = trainer.predict(test_data)
